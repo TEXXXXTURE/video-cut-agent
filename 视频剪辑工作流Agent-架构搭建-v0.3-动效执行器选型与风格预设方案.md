@@ -11,7 +11,7 @@
 |---|---|---|
 | v0.1 | 2026-09-30 | 架构定稿：四层 + 内核 + 时间轴 JSON schema + 执行器接口 + 机检清单 + 人审工作台 |
 | v0.2 | 2026-10-01 | 剪辑执行器操作层；词级时间戳 + 语义锚点；评审留痕/人审映射；社区调研吸收 |
-| **v0.3** | **2026-10-01** | **动效生成模块选型收窄**：① 动效工具调研结论（代码即视频主线 + 三层质量保障）；② Claude Opus 5.5 逐帧动画案例核实（技术原理 + 架构印证）；③ 真实采用与质感调研（Remotion 生产级证据 + "flat and generic" 教训）；④ 社区预设对标与采用建议（Remotion 官方 skill / HyperFrames / video-shotcraft 等，效果图证据）；⑤ 新增**风格预设选择节点**（制作前人选风格 → 注入 aesthetic-guide.json）；⑥ 五类动效事件 × 执行器映射更新 |
+| **v0.3** | **2026-10-01** | **动效生成模块调研与候选**：① 动效工具调研结论（**代码即视频 = 执行器渲染层候选之一，非方案主线**；方案主体 = 编排层语义判断；三层质量保障）；② Claude Opus 5.5 逐帧动画案例核实（技术原理 + 架构印证）；③ 真实采用与质感调研（Remotion 生产级证据 + "flat and generic" 教训）；④ 社区预设对标与采用建议（Remotion 官方 skill / HyperFrames / video-shotcraft 等，效果图证据）；⑤ 新增**风格预设选择节点**（制作前人选风格 → 注入 aesthetic-guide.json）；⑥ 五类动效事件 × 执行器映射更新（候选） |
 
 ---
 
@@ -21,7 +21,7 @@ v0.2 遗留缺口：**动效生成模块（五类执行器）只到选型级，�
 
 v0.3 回答三个问题：
 
-1. **动效执行器走哪条技术路线？** → 代码即视频（确定性渲染），不选 diffusion 生成（连贯性靠函数保证，见第 2 章）。
+1. **动效执行器走哪条技术路线？** → **渲染层候选**：代码即视频（确定性渲染）优先，diffusion 生成作 illustration/anim 候选——但这是执行器层的技术选项，**不是方案主线**；方案（怎么编排、语义判断用哪个工具）由编排层制定，等真实运行数据再锁定（见第 1/2/7 章）。
 2. **质感从哪来？** → 三层质量保障：组件库（地板，不可能丑）+ aesthetic-guide.json（方向，不许跑偏）+ design brief/参考素材（目标，要长什么样）。不是玄学提示词（见第 3 章）。
 3. **风格方向谁定？** → 人。新增**风格预设选择节点**：视频制作前，人从风格预设库（效果图对标后）选定基调，锁定后注入 aesthetic-guide.json（见第 5 章）。
 
@@ -33,7 +33,7 @@ v0.3 回答三个问题：
 
 | 路线 | 代表 | 特点 | 结论 |
 |---|---|---|---|
-| **A. 代码即视频** | Remotion v3 + Agent Skills / HyperFrames / Motion Canvas / 自建 SVG | 确定性渲染：帧 n = f(时间)，连贯性由函数保证；可控、可校验、可批量 | **主线**：overlay / card / diagram 全走这条 |
+| **A. 代码即视频** | Remotion v3 + Agent Skills / HyperFrames / Motion Canvas / 自建 SVG | 确定性渲染：帧 n = f(时间)，连贯性由函数保证；可控、可校验、可批量 | **渲染层首选候选**：overlay / card / diagram 优先（可替换） |
 | B. 生成式（diffusion） | 文生图 / 文生视频 | 视觉上限高但不可控：逐帧采样漂移、随机错帧 | 仅 illustration / anim 中"没见过的东西"用 |
 | C. 模板式 | 剪映 / CapCut | 无开放自动化 API，不能当执行器 | 已排除（仅人审台/交互范式参考） |
 
@@ -42,7 +42,7 @@ v0.3 回答三个问题：
 | 执行器 | 吃的事件 | 产物 | v0.3 选型 |
 |---|---|---|---|
 | 剪辑执行器 | 整个任务 | 粗剪.mp4 + cut-list + timeline_base | **自建**（faster-whisper + 规则脚本 + ffmpeg，v0.2 §3.2，无变更） |
-| overlay 渲染器 | `overlay` | 引导层（圈选/箭头/高亮/标注） | **Remotion 官方 skill（主）** + HyperFrames 组件；自建 SVG 为替换候选 |
+| overlay 渲染器 | `overlay` | 引导层（圈选/箭头/高亮/标注） | **Remotion 官方 skill（首选候选）** + HyperFrames 组件；自建 SVG 为替换候选 |
 | card 渲染器 | `card` | 关键词卡图层 | Remotion（/remotion-captions 字幕、卡片组件） |
 | diagram 生成器 | `diagram` | 结构图/思维导图/数据图表 | HyperFrames 模板（Decision Tree / NYT-Style Chart / Takram Organic）+ D3/Recharts（Remotion 内） |
 | illustration 生成器 | `illustration` | 解释性图片 | vox-director（Vox 纸拼贴科普质感）；文生图服务为替换 |
@@ -80,7 +80,7 @@ v0.3 回答三个问题：
 | design bible（全局风格约束） | aesthetic-guide.json | 同构，方向正确 |
 | scene 拆分 + 独立校验 | 语义组 + 单事件重做预算 | 独立单元可重做、可并行 |
 | `hyperframes check` 静态校验 | 机检层（抽帧/编码/锚点规则） | 校验靠中间产物，不靠逐帧预览 |
-| 确定性程序动画 | overlay/card/diagram/anim 执行器核心渲染路线 | **动效执行器必须走确定性程序动画，不选 diffusion 生成** |
+| 确定性程序动画 | overlay/card/diagram/anim 执行器渲染层候选 | **渲染层优先候选，非方案主线**；方案由编排层语义判断，执行器选型待运行数据锁定 |
 
 ---
 
@@ -190,7 +190,7 @@ v0.3 回答三个问题：
 | 4 | 重做预算 | 每事件 3 次 | 卡死上报频率 | ⏳ 待定 |
 | 5 | 剪辑规则参数 | VAD 500ms / 删静音 ≥1.5s / 最短保留 0.5s | 剪辑质量 | ⏳ 待实测调参 |
 | 6 | **风格预设库结构** | `style-presets.json`（v0.3 §5.4） | 风格选择节点落地 | ⏳ 待定（建议直接采用） |
-| 7 | **动效执行器选型** | Remotion 官方 skill（overlay/card/diagram）+ video-shotcraft（风格库+anim）+ HyperFrames（diagram 模板） | 执行器落地 | ⏳ 待用户最终拍板（方向已认可） |
+| 7 | **动效执行器选型** | **渲染层候选**：Remotion 官方 skill（overlay/card/diagram）+ video-shotcraft（风格库+anim）+ HyperFrames（diagram 模板）；**方案主体 = 编排层语义判断，非渲染层** | 执行器落地 | ⏳ 候选待运行数据验证（用户已明确：渲染层是选项之一，非主线） |
 
 ---
 
