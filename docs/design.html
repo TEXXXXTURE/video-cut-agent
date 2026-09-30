@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>剪辑工坊 · Design</title>
+<meta name="description" content="剪辑工坊（video-cut-agent）设计语言：五类引导型动效、风格基调预览、三层质量保障与设计原则。">
+<style>
+  :root {
+    --bg-0: #05070f;
+    --bg-1: #0a1226;
+    --bg-2: #101b36;
+    --card: rgba(16, 27, 54, 0.72);
+    --card-border: rgba(120, 180, 255, 0.16);
+    --ink: #e8eefb;
+    --ink-dim: #93a4c8;
+    --ink-faint: #5c6f96;
+    --accent: #4fd8e8;
+    --accent-2: #8ab4ff;
+    --warm: #f0c987;
+    --line: rgba(120, 180, 255, 0.12);
+    --radius: 14px;
+    --mono: "SFMono-Regular", "Cascadia Code", Consolas, "Liberation Mono", monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(79, 216, 232, 0.10), transparent 60%),
+      radial-gradient(900px 500px at 8% 20%, rgba(138, 180, 255, 0.08), transparent 55%),
+      linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 45%, var(--bg-0) 100%);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .star { position: absolute; background: #cfe6ff; border-radius: 50%; opacity: .5; animation: twinkle 5s ease-in-out infinite; }
+  @keyframes twinkle { 0%,100% { opacity: .18; } 50% { opacity: .6; } }
+  .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 28px 80px; }
+
+  /* Header */
+  header { padding: 88px 0 24px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12.5px; letter-spacing: .28em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 14px;
+  }
+  h1 { font-size: 44px; font-weight: 700; letter-spacing: .02em; line-height: 1.2; }
+  h1 .dot { color: var(--accent); }
+  .sub { margin-top: 16px; color: var(--ink-dim); font-size: 16.5px; max-width: 720px; }
+  .sub b { color: var(--ink); font-weight: 600; }
+
+  /* Section */
+  section { margin-top: 64px; }
+  h2 {
+    font-size: 22px; font-weight: 650; display: flex; align-items: baseline; gap: 12px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--line);
+  }
+  h2 .no { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: .1em; }
+  .lead { color: var(--ink-dim); font-size: 14.5px; margin: 14px 0 22px; max-width: 760px; }
+
+  /* Motion types */
+  .motion-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(196px, 1fr)); gap: 14px; }
+  .motion-card {
+    background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius);
+    padding: 18px 18px 16px; backdrop-filter: blur(6px);
+    transition: border-color .25s, transform .25s;
+  }
+  .motion-card:hover { border-color: rgba(79, 216, 232, 0.42); transform: translateY(-2px); }
+  .motion-card .tag {
+    display: inline-block; font-family: var(--mono); font-size: 11.5px; letter-spacing: .14em;
+    color: var(--accent); border: 1px solid rgba(79, 216, 232, 0.35); border-radius: 999px;
+    padding: 2px 10px; margin-bottom: 10px;
+  }
+  .motion-card h3 { font-size: 16.5px; font-weight: 650; }
+  .motion-card p { font-size: 13.5px; color: var(--ink-dim); margin-top: 6px; }
+  .motion-card .ex { font-size: 12.5px; color: var(--ink-faint); margin-top: 8px; }
+
+  /* Style previews */
+  .style-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .style-item { border: 1px solid var(--card-border); border-radius: var(--radius); overflow: hidden; background: var(--card); }
+  .style-item img { display: block; width: 100%; height: auto; }
+  .style-cap { padding: 12px 16px 14px; }
+  .style-cap h3 { font-size: 15.5px; font-weight: 650; }
+  .style-cap p { font-size: 13px; color: var(--ink-dim); margin-top: 4px; }
+  .style-cap .status { display: inline-block; margin-top: 8px; font-size: 12px; color: var(--warm); font-family: var(--mono); letter-spacing: .06em; }
+
+  /* Guarantees */
+  .guarantee-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .g-card { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 18px; }
+  .g-card .g-no { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: .1em; }
+  .g-card h3 { font-size: 15.5px; margin-top: 6px; }
+  .g-card p { font-size: 13px; color: var(--ink-dim); margin-top: 6px; }
+
+  /* Principles */
+  .principles { list-style: none; display: grid; gap: 10px; }
+  .principles li {
+    background: var(--card); border: 1px solid var(--card-border); border-radius: 12px;
+    padding: 14px 18px; font-size: 14px; color: var(--ink-dim);
+  }
+  .principles li b { color: var(--ink); font-weight: 600; }
+
+  /* Preset note */
+  .preset-note {
+    margin-top: 18px; border: 1px dashed rgba(79, 216, 232, 0.32); border-radius: 12px;
+    padding: 16px 20px; font-size: 13.5px; color: var(--ink-dim);
+  }
+  .preset-note code { font-family: var(--mono); color: var(--accent-2); font-size: 12.5px; }
+
+  footer { margin-top: 72px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--ink-faint); font-size: 12.5px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  footer a { color: var(--ink-faint); text-decoration: none; border-bottom: 1px dotted var(--ink-faint); }
+  footer a:hover { color: var(--accent); border-color: var(--accent); }
+
+  @media (max-width: 720px) {
+    h1 { font-size: 34px; }
+    .style-row { grid-template-columns: 1fr; }
+    header { padding-top: 56px; }
+  }
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">video-cut-agent · Design Language</div>
+    <h1>剪辑工坊<span class="dot">.</span></h1>
+    <p class="sub">语义驱动的智能剪辑与<b>引导型动效编排</b>工作流。我们的动效不是炫技的特效，而是科普视频里那些<b>把视线带到该看的地方</b>的东西——圈选、关键词卡、结构图、解释插画。这份设计语言定义了它们长什么样、按什么规则出现。</p>
+  </header>
+
+  <section>
+    <h2><span class="no">01</span>五类动效元素</h2>
+    <p class="lead">所有动效收敛为五类可编排的事件，由时间轴 JSON 契约驱动。执行器只认契约，不认视频。</p>
+    <div class="motion-grid">
+      <div class="motion-card">
+        <span class="tag">OVERLAY</span>
+        <h3>引导标注</h3>
+        <p>叠加在画面上，把视线带到关键位置。</p>
+        <div class="ex">圈选 · 箭头 · 高亮 · 局部放大</div>
+      </div>
+      <div class="motion-card">
+        <span class="tag">CARD</span>
+        <h3>关键词信息卡</h3>
+        <p>把抽象名词落成字幕条、术语卡，停留可读。</p>
+        <div class="ex">字幕条 · 术语卡 · 标签</div>
+      </div>
+      <div class="motion-card">
+        <span class="tag">DIAGRAM</span>
+        <h3>结构可视化</h3>
+        <p>把关系画出来：思维导图、流程图、数据图。</p>
+        <div class="ex">思维导图 · 流程图 · 数据图表</div>
+      </div>
+      <div class="motion-card">
+        <span class="tag">ILLUSTRATION</span>
+        <h3>解释型插画</h3>
+        <p>用户没见过的东西，做成示意图展示出来。</p>
+        <div class="ex">概念示意 · 剖面 · 科普插画</div>
+      </div>
+      <div class="motion-card">
+        <span class="tag">ANIM</span>
+        <h3>程序化动画</h3>
+        <p>场景级代码动画，由同一函数计算帧，天然连贯。</p>
+        <div class="ex">代码即视频 · 场景动画 · 数据驱动</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">02</span>风格基调预览</h2>
+    <p class="lead">制作前由人选风格预设，锁定后注入审美指导文件。当前两套候选基调（示意：仅表达视觉方向，不含实际文案）。</p>
+    <div class="style-row">
+      <div class="style-item">
+        <img src="design/style-warm-paper.png" alt="暖纸编辑风基调预览">
+        <div class="style-cap">
+          <h3>暖纸编辑风</h3>
+          <p>米白纸张 + 暖褐编辑标注，像知识区编辑台的工作台面。温暖、克制、阅读舒适，适合人文向科普与轻叙事。</p>
+          <span class="status">● 候选基调 A</span>
+        </div>
+      </div>
+      <div class="style-item">
+        <img src="design/style-deepspace-tech.png" alt="深空科技风基调预览">
+        <div class="style-cap">
+          <h3>深空科技风</h3>
+          <p>深空渐变 + 冷白/青色高亮，精密网格与克制的辉光。冷静、清晰、宇宙感，适合科技向科普与数据解释。</p>
+          <span class="status">● 候选基调 B</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">03</span>三层质量保障</h2>
+    <p class="lead">质感不是靠玄学提示词，而是靠结构化的三层保障——下限、方向、目标。</p>
+    <div class="guarantee-grid">
+      <div class="g-card">
+        <div class="g-no">LAYER 1</div>
+        <h3>组件库</h3>
+        <p>预置设计良好的组件与风格预设，决定"地板"——默认不可能丑。社区预设（video-shotcraft 214 风格 / HyperFrames 模板）带效果图对标。</p>
+      </div>
+      <div class="g-card">
+        <div class="g-no">LAYER 2</div>
+        <h3>审美指导</h3>
+        <p>aesthetic-guide.json：色板、字体、特效、风格的方向与限制。人审驳回理由经确认后沉淀为约束，只增不减。</p>
+      </div>
+      <div class="g-card">
+        <div class="g-no">LAYER 3</div>
+        <h3>参考素材</h3>
+        <p>每次制作前选定参考目标，让动效有明确的对齐对象，而不是凭空发挥。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">04</span>设计原则</h2>
+    <p class="lead">动效出现的纪律，比动效本身更重要。</p>
+    <ul class="principles">
+      <li><b>引导而非装饰</b>——每个动效必须回答"帮用户看到什么"；纯粹好看的动效不进时间轴。</li>
+      <li><b>解释而非炫技</b>——抽象概念配结构图，陌生事物配插画；特效服务于理解，不服务于存在感。</li>
+      <li><b>克制与一致</b>——同一内容同类信息用同一组件；颜色只承担分组、状态与重点，不承担装饰。</li>
+      <li><b>人审校准</b>——机检只查"基础内容没做好"，审美判断永远留给审核层，驳回理由沉淀回约束。</li>
+      <li><b>语义锚点驱动</b>——一切动效锚定在语义上（词、句、概念），绝对时间只是派生缓存。</li>
+    </ul>
+    <div class="preset-note">
+      风格预设库规划：<code>style-presets.json</code>（id / name / source / palette / typography / motion_language / preview / constraints）。
+      来源对标 <code>video-shotcraft</code>（镜头配方 + 运动语言）与 <code>HyperFrames</code>（模板带视频 demo）；制作前由人选定基调。
+    </div>
+  </section>
+
+  <footer>
+    <span>剪辑工坊 · video-cut-agent · 架构 v0.3</span>
+    <span><a href="https://github.com/TEXXXXTURE/剪辑工坊" target="_blank" rel="noopener">GitHub</a> · <a href="https://vincentwei1021.github.io/video-shotcraft/" target="_blank" rel="noopener">风格参考 · video-shotcraft</a></span>
+  </footer>
+
+</div>
+<script>
+(function () {
+  var s = document.getElementById('stars'), i, n = 70;
+  for (i = 0; i < n; i++) {
+    var d = document.createElement('span');
+    d.className = 'star';
+    var sz = (Math.random() * 1.8 + 0.6).toFixed(1);
+    d.style.width = sz + 'px'; d.style.height = sz + 'px';
+    d.style.left = (Math.random() * 100).toFixed(2) + '%';
+    d.style.top = (Math.random() * 100).toFixed(2) + '%';
+    d.style.animationDelay = (Math.random() * 5).toFixed(2) + 's';
+    s.appendChild(d);
+  }
+})();
+</script>
+</body>
+</html>
