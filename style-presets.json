@@ -1,12 +1,13 @@
 {
-  "version": "0.1",
+  "version": "0.2",
   "updated": "2026-10-01",
-  "note": "风格预设库（v0.3 §5.4 落地）。每个预设 = 执行器类型 + 来源 + 质感参数 + 参考证据 + 硬约束。制作前由人选基调 → 锁定注入 aesthetic-guide.json → 人审驳回理由沉淀回本库（只增不减）。",
+  "note": "风格预设库（v0.3 §5.4 落地；v0.4 双路径体系修正）。每条预设含 path 字段：material=路径A素材辅助（动效为引导/解释层），generate=路径B生成主导（动画即内容）。制作前由人选基调 → 锁定注入 aesthetic-guide.json → 人审驳回理由沉淀回本库（只增不减）。",
   "presets": [
     {
       "id": "opus-code-cinematic",
       "name": "Opus 代码直出 · 电影感",
       "type": "anim",
+      "path": "generate",
       "source": "Opus 5.5 代码直出动画潮（2026-09-22 模型发布后一周内 viral）",
       "origin": "抖音《Vibe 知识大赏｜Opus5.5动画测试》（2026-09-25，眩晕/瘫坐/原子弹爆炸气质的 Opus 5.5 直出动画）；用户 2026-10-01 确认认可该气质并加入预设",
       "evidence": [
