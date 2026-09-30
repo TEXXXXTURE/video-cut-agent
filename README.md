@@ -86,12 +86,13 @@
 - 架构 v0.3 定稿，schema 三项决策已拍板（ADR-0002）
 - 社区调研完成：转录驱动剪辑是主流；执行器必须 CLI/脚本（SaaS/NLE 不可编程）；关键参考 [ossclip](https://github.com/chenxwh/ossclip)
 - 动效选型调研完成：代码即视频（Claude 逐帧案例核实）、Remotion 生产级采用证据、video-shotcraft / HyperFrames 风格库对标
+- **风格预设库 v0.1 落地**（2026-10-01）：`style-presets.json` 首条「Opus 代码直出 · 电影感」——来自用户认可的 Opus 5.5 直出动画气质（抖音 Vibe 知识大赏同族），含节拍表方法论（画面/配乐/音效同一张 beat sheet）与六步制作流程参考
 - **MVP 未启动**——按 ADR-0002，用外部执行器（faster-whisper + ffmpeg + Remotion 官方 skill）跑通"转录→cut-list→粗剪→字幕重映射"，初期手动为主
 
 ## 路线图
 
 1. **MVP 剪辑管线**：拿真实口播素材跑通转录 → cut-list → ffmpeg → 字幕重映射，实测规则参数（VAD 500ms / 删静音 ≥1.5s / 最短保留 0.5s）
-2. **风格预设库落地**：style-presets.json（video-shotcraft 214 styles / HyperFrames 模板），制作前人选风格
+2. **风格预设库扩充**：style-presets.json（v0.1 已含「Opus 代码直出·电影感」；继续收 video-shotcraft 214 styles / HyperFrames 模板 / Clawd 节拍表方法论），制作前人选风格
 3. **动效执行器原型**：Remotion 官方 skill 为主，代码即视频为渲染层候选
 4. **机检 + 人审工作台**：规则 + LLM 摘要 + 视觉模型截图；驳回理由沉淀回审美指导
 

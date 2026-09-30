@@ -1,0 +1,56 @@
+{
+  "version": "0.1",
+  "updated": "2026-10-01",
+  "note": "风格预设库（v0.3 §5.4 落地）。每个预设 = 执行器类型 + 来源 + 质感参数 + 参考证据 + 硬约束。制作前由人选基调 → 锁定注入 aesthetic-guide.json → 人审驳回理由沉淀回本库（只增不减）。",
+  "presets": [
+    {
+      "id": "opus-code-cinematic",
+      "name": "Opus 代码直出 · 电影感",
+      "type": "anim",
+      "source": "Opus 5.5 代码直出动画潮（2026-09-22 模型发布后一周内 viral）",
+      "origin": "抖音《Vibe 知识大赏｜Opus5.5动画测试》（2026-09-25，眩晕/瘫坐/原子弹爆炸气质的 Opus 5.5 直出动画）；用户 2026-10-01 确认认可该气质并加入预设",
+      "evidence": [
+        "抖音 7689353484802500067：原视频（2026-09-25，作者展示 Opus 写剪辑软件代码+直出动画）",
+        "即刻 阿头ATou：『不光动画用代码写，连配乐都是它写代码直接合成的，配乐还卡动画节奏』",
+        "YouTube iFEP7IauIJE《OPUS 5.5 · { JUST CODE }》：一个机器人六种动画风格（铅笔素描/像素/1930s卡通/黏土/动漫/全息），每帧由 Remotion 绘制——印证 anim 执行器候选",
+        "YouTube YXl_BnG2hzs《I Gave Claude 7 Lines. It Made a Cinematic Trailer》：7 行提示词→2 分钟电影感预告片，Python + GLSL shaders + ffmpeg，零素材",
+        "抖音 7689743418313952538《我和Clawd的Opus 5.5动画教程》：六步流程，画面/配乐/音效共用同一张节拍表，使用 HyperFrames Skill",
+        "微博 宝玉xp《中华文明史》：配乐当时钟（五声调式、BPM 加快、切点踩拍），双画风交替，每卷主色+时代纹样",
+        "量子位/博客园：78 秒高噪点磨砂风动画 45 分钟直出"
+      ],
+      "palette": {
+        "base": "深色底为主（近黑/深蓝/深灰），情绪化场景可全黑留白",
+        "accent": "单一高对比强调色（琥珀暖 / 冷青 / 血橙），同一片只允许一个情绪色",
+        "texture": "可选胶片颗粒/高噪点磨砂质感（78 秒磨砂风先例），克制使用",
+        "forbidden": "彩虹渐变、霓虹堆叠、无信息纯装饰光效"
+      },
+      "typography": {
+        "headline": "大字号、高字重、衬线或无衬线均可，但全片唯一；标题感强于卡片感",
+        "body": "与正文视频同层级的极简无衬线，不抢画面",
+        "rule": "文字即画面主体时用代码渲染（清晰锐利），不用贴图文字"
+      },
+      "motion_language": {
+        "engine": "代码即视频（确定性渲染）：浏览器/Remotion/Three.js/GLSL 逐帧计算，ffmpeg 合成；帧=同一函数算出来的，天然连贯（Claude 逐帧案例原理）",
+        "beat_sheet": "画面、配乐、音效共用同一张节拍表（Clawd 教程核心）：先拆节拍/鼓点/响度/逐词时间轴写进代码，所有切点踩拍",
+        "camera": "镜头运动（推/拉/摇/移）代码驱动；场景拆层（如夜空/远山/近山/云各走各速）制造纵深",
+        "character": "姿态序列（蓄力→蹬地→腾空→落地）+ 挤压拉伸 + 残影 + 落地尘/影反馈，代码按节奏换姿态",
+        "style_switch": "同源多风格切换（JUST CODE 六风格先例）：风格作为参数，不重写整个 pipeline",
+        "mood": "情绪冲击优先于信息密度：眩晕/瘫坐/爆炸这类『能力震撼感』是气质目标，允许抽象、超现实、电影化"
+      },
+      "preview": [
+        "https://www.iesdouyin.com/share/video/7689353484802500067",
+        "https://m.youtube.com/watch?v=iFEP7IauIJE",
+        "https://m.youtube.com/watch?v=YXl_BnG2hzs",
+        "https://www.iesdouyin.com/share/video/7689743418313952538"
+      ],
+      "constraints": [
+        "整片级程序动画，不是实拍叠加层：不适合 overlay/card 场景，只走 anim 执行器",
+        "渲染需 headless 浏览器或 GPU 环境（Remotion/Three.js/GLSL），无 GPU 时渲染慢",
+        "长视频渲染成本高（3000 帧先例≈数小时级），MVP 建议 ≤60s 片段验证",
+        "配乐代码合成依赖 beat sheet 与波形数据，音频素材缺失时先跑转录/节拍分析",
+        "情绪化/电影感审美由人审校准（审核层驳回理由沉淀），机检只查基础质量不判审美",
+        "风格切换参数化后各风格需独立抽帧验收（每帧由代码算出，错误是系统性的）"
+      ]
+    }
+  ]
+}
