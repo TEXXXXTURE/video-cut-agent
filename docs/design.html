@@ -60,6 +60,21 @@
   h2 .no { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: .1em; }
   .lead { color: var(--ink-dim); font-size: 14.5px; margin: 14px 0 22px; max-width: 760px; }
 
+  /* Dual path */
+  .path-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .path-card { border-radius: var(--radius); padding: 16px 18px; }
+  .path-a { background: rgba(240, 201, 135, 0.06); border: 1px solid rgba(240, 201, 135, 0.30); }
+  .path-b { background: rgba(79, 216, 232, 0.06); border: 1px solid rgba(79, 216, 232, 0.30); }
+  .path-card .path-name { font-size: 15.5px; font-weight: 700; }
+  .path-a .path-name { color: var(--warm); }
+  .path-b .path-name { color: var(--accent); }
+  .path-card p { font-size: 13px; color: var(--ink-dim); margin-top: 6px; }
+  .path-shared {
+    margin-top: 12px; background: rgba(138, 180, 255, 0.06); border: 1px dashed rgba(138, 180, 255, 0.28);
+    border-radius: 12px; padding: 10px 16px; font-size: 12.5px; color: var(--ink-dim);
+  }
+  .path-shared b { color: var(--ink); font-weight: 600; }
+
   /* Motion types */
   .motion-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(196px, 1fr)); gap: 14px; }
   .motion-card {
@@ -128,6 +143,22 @@
     <h1>剪辑工坊<span class="dot">.</span></h1>
     <p class="sub">语义驱动的智能剪辑与<b>引导型动效编排</b>工作流。我们的动效不是炫技的特效，而是科普视频里那些<b>把视线带到该看的地方</b>的东西——圈选、关键词卡、结构图、解释插画。这份设计语言定义了它们长什么样、按什么规则出现。</p>
   </header>
+
+  <section>
+    <h2><span class="no">00</span>双路径体系</h2>
+    <p class="lead">需求分析是唯一共同起点：<b style="color:var(--warm)">有素材</b>就辅助素材讲清楚观点；<b style="color:var(--accent)">没有素材</b>就由画面/动画直接表达。两条路径共用编排、契约、机检与审核，只有执行器和动效角色不同。</p>
+    <div class="path-row">
+      <div class="path-card path-a">
+        <div class="path-name">A · 素材辅助</div>
+        <p>素材 → 转录 → 粗剪 → 字幕重映射 → 引导型动效（overlay / card / diagram / illustration）。动效是引导/解释层，服务素材内容。</p>
+      </div>
+      <div class="path-card path-b">
+        <div class="path-name">B · 生成主导</div>
+        <p>文生图/多参生图组装，或强模型代码直出（逐帧渲染 → ffmpeg，节拍表对齐画面/配乐/音效）。动画即内容，配音后置（AI/人）。</p>
+      </div>
+    </div>
+    <div class="path-shared"><b>共用骨架：</b>时间轴 JSON 契约（语义锚点主键）· 机检层（规则+LLM+视觉截图保底）· 审核层（驳回沉淀·只增不减）· 审美指导 · 风格预设库（style-presets.json 按 <code>path: material / generate</code> 打标）</div>
+  </section>
 
   <section>
     <h2><span class="no">01</span>五类动效元素</h2>
@@ -222,13 +253,13 @@
       <li><b>语义锚点驱动</b>——一切动效锚定在语义上（词、句、概念），绝对时间只是派生缓存。</li>
     </ul>
     <div class="preset-note">
-      风格预设库规划：<code>style-presets.json</code>（id / name / source / palette / typography / motion_language / preview / constraints）。
-      来源对标 <code>video-shotcraft</code>（镜头配方 + 运动语言）与 <code>HyperFrames</code>（模板带视频 demo）；制作前由人选定基调。
+      风格预设库已落地：<code>style-presets.json</code> v0.2（id / name / type / <b>path</b> / source / palette / typography / motion_language / preview / constraints），
+      首条「Opus 代码直出 · 电影感」（<code>path: generate</code>）。继续扩充 <code>video-shotcraft</code>（214 风格 + 运动语言）与 <code>HyperFrames</code>（模板带视频 demo）；制作前由人选定基调。
     </div>
   </section>
 
   <footer>
-    <span>剪辑工坊 · video-cut-agent · 架构 v0.3</span>
+    <span>剪辑工坊 · video-cut-agent · 架构 v0.4</span>
     <span><a href="https://github.com/TEXXXXTURE/video-cut-agent" target="_blank" rel="noopener">GitHub</a> · <a href="https://vincentwei1021.github.io/video-shotcraft/" target="_blank" rel="noopener">风格参考 · video-shotcraft</a></span>
   </footer>
 
